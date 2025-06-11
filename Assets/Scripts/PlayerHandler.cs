@@ -24,4 +24,12 @@ public class PlayerHandler : MonoBehaviour
 
         rb.AddForce(movement * speed);
     }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Collectible"))
+        {
+            other.gameObject.SetActive(false);
+        }
+    }
 }
