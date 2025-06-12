@@ -1,14 +1,15 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 [RequireComponent(typeof(AudioSource))]
 public class MusicPlayer : MonoBehaviour
 {
-    public AudioClip musicClip;           // Clip de música a reproducir
-    public float fadeInDuration = 3f;     // Duración del fade-in en segundos
+    public AudioClip musicClip;
+    public float fadeInDuration = 3f;
 
     private AudioSource audioSource;
-    private float targetVolume;           // Volumen final al que haremos el fade-in
+    private float targetVolume;
 
     private static MusicPlayer instance;
 
@@ -17,20 +18,21 @@ public class MusicPlayer : MonoBehaviour
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject); // ¡No destruir este objeto al cambiar escena!
+            DontDestroyOnLoad(gameObject);
+            SceneManager.sceneLoaded += OnSceneLoaded;
         }
         else
         {
-            Destroy(gameObject); // Ya existe otro MusicPlayer, destruye este duplicado
+            Destroy(gameObject);
         }
     }
 
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
-        targetVolume = audioSource.volume;  // Guardamos el volumen configurado en el Inspector
+        targetVolume = audioSource.volume;
         audioSource.clip = musicClip;
-        audioSource.volume = 0f;            // Comienza desde silencio
+        audioSource.volume = 0f;
         audioSource.loop = true;
         audioSource.Play();
 
@@ -40,7 +42,6 @@ public class MusicPlayer : MonoBehaviour
     IEnumerator FadeIn()
     {
         float elapsed = 0f;
-
         while (elapsed < fadeInDuration)
         {
             elapsed += Time.deltaTime;
@@ -49,6 +50,19 @@ public class MusicPlayer : MonoBehaviour
             yield return null;
         }
 
-        audioSource.volume = targetVolume;  // Asegura el volumen final exacto
+        audioSource.volume = targetVolume;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "Main Menu")
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 }

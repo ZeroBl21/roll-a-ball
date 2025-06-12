@@ -16,7 +16,6 @@ public class PlayerHandler : MonoBehaviour
     private float timeRemaining;
     private bool gameEnded = false;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -27,7 +26,6 @@ public class PlayerHandler : MonoBehaviour
         UpdateTimerText();
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
         if (gameEnded) return;
@@ -37,10 +35,8 @@ public class PlayerHandler : MonoBehaviour
 
         Vector3 inputVector = new Vector3(moveHorizontal, 0.0f, moveVertical);
 
-        // Más responsivo y directo
         rb.AddForce(inputVector * speed, ForceMode.Force);
 
-        // Opcional: ayuda a girar visualmente como bola realista
         Vector3 torque = new Vector3(inputVector.z, 0, -inputVector.x);
         rb.AddTorque(torque * speed * 0.5f);
     }
@@ -62,6 +58,7 @@ public class PlayerHandler : MonoBehaviour
         {
             winText.text = "You Lose";
             gameEnded = true;
+            Invoke("RestartLevel", 2f);
         }
     }
 
@@ -124,8 +121,7 @@ public class PlayerHandler : MonoBehaviour
         else
         {
             Debug.Log("¡Has terminado todos los niveles!");
-            // También podrías volver al menú, reiniciar, etc.
-            SceneManager.LoadScene(0); // vuelve al menú, por ejemplo
+            SceneManager.LoadScene("Main Menu");
         }
     }
 }
